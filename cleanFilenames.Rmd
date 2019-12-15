@@ -16,3 +16,19 @@ files$group <- group
 spltFiles <- split(files,files$group)
 ```
 
+```{r}
+for(i in 1:length(spltFiles)){
+      if (nrow(spltFiles[[i]]) > 3){
+            fnames <- spltFiles[[i]]$fileName
+            fodrStr <- sapply(fnames,function(fn) paste0(strsplit(fn,'_')[[1]][c(5,4)],collapse = ''))
+            spltFiles[[i]] <- spltFiles[[i]][order(fodrStr),]
+      }
+}
+```
+
+```{r}
+for(i in 1:length(spltFiles)){
+      write.table(spltFiles[[i]][,1],file=paste0('files/',spltFiles[[i]][1,2],'.txt'),quote = F,row.names = F,col.names = F)
+}
+```
+
