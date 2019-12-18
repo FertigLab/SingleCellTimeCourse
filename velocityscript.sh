@@ -9,21 +9,24 @@ files=( $(aws s3 ls s3://fertig-lab-bucket/projects/Short_Time_Course_Single_Cel
 
 # download fileGroup files
 for file in ${files[1]}; do
-	#download one file SXX_L00X.txt
-	echo downloading file $file
-	aws s3 cp s3://fertig-lab-bucket/projects/Short_Time_Course_Single_Cell/fileGroups/$file ./
-	fastqFiles=( $(awk '{print $1}' $file))
-	folderName=$(echo $file | tr -d '.txt' | cat)
-	echo making folder $folderName
-	mkdir $folderName
-	input=${folderName}/${file}
-	while IFS= read -r line
-	do
-  		echo "$line"
-	done < "$input"
-	echo removing folder $folderName
-	rm $folderNamevim
-	echo removing file $file
+        #download one file SXX_L00X.txt
+        echo downloading file $file
+        aws s3 cp s3://fertig-lab-bucket/projects/Short_Time_Course_Single_Cell/fileGroups/${file} ./
+        fastqFiles=( $(awk '{print $1}' $file))
+        folderName=$(echo $file | tr -d '.txt' | cat)
+        echo making folder $folderName
+        mkdir $folderName
+        rfq=()
+        for fq in ${fastqFiles[@]}; do
+                fq=$(echo $fq | tr -d '\040\011\012\015' | cat)
+                aws s3 cp s3://fertig-lab-bucket/projects/Short_Time_Course_Single_Cell/${fq} ${folderName}/
+                if echo $fq | grep _R; then
+                        rfq+=( $fq )
+                fi
+        done
+        echo removing folder $folderName
+        #rm -r $folderName
+        echo removing file $file
 	rm $file
 done
 # dowload the files in a group
