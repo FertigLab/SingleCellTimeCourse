@@ -116,6 +116,11 @@ equal == len(pdSCon.columns)
 ```
 
 ```python
+adata.layers['spliced'] = scp.sparse.csr_matrix(pdSCon.values)
+adata.layers['unspliced'] = scp.sparse.csr_matrix(pdUCon.values)
+```
+
+```python
 scv.utils.show_proportions(adata)
 adata
 ```
