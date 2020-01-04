@@ -1,0 +1,34 @@
+---
+title: "separteFileNames"
+author: "Gaurav"
+date: "12/15/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+files <- read.table('SCTCfiles.txt',stringsAsFactors = F)
+```
+Split files in groups
+```{r}
+colnames(files)[1] <- 'fileName' 
+group <- sapply(1:nrow(files),function(i) paste0(strsplit(files[i,1],'_')[[1]][2:3],collapse = '_'))
+files$group <- group
+spltFiles <- split(files,files$group)
+```
+Sort names with group for downstream kb analysis
+```{r}
+for(i in 1:length(spltFiles)){
+      if (nrow(spltFiles[[i]]) > 3){
+            fnames <- spltFiles[[i]]$fileName
+            fodrStr <- sapply(fnames,function(fn) paste0(strsplit(fn,'_')[[1]][c(5,4)],collapse = ''))
+            spltFiles[[i]] <- spltFiles[[i]][order(fodrStr),]
+      }
+}
+```
+Save group files
+```{r}
+for(i in 1:length(spltFiles)){
+      write.table(spltFiles[[i]][,1],file=paste0('files/',spltFiles[[i]][1,2],'.txt'),quote = F,row.names = F,col.names = F)
+}
+```
+
