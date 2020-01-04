@@ -67,6 +67,13 @@ adata
 ```
 
 ```python
+obs = []
+for barcode in adata.obs.index:
+    obs.append(barcode)
+len(obs) == len(set(obs))
+```
+
+```python
 #store spliced and unspliced for concatenation separately because it will get concat
 s = []
 u = []
@@ -86,5 +93,68 @@ for i,um in enumerate(u):
 ```
 
 ```python
+#concatenate the data
+pdSCon = pd.concat(pdS,sort=False)
+pdUCon = pd.concat(pdU,sort=False)
+```
 
+```python
+# Rearrange the gene names (cols) to match with the adata concatenation
+pdSCon = pdSCon.loc[:,adata.var.index]
+pdUCon = pdUCon.loc[:,adata.var.index]
+#fill na with 0
+pdSCon.fillna(0,inplace=True)
+pdUCon.fillna(0,inplace=True)
+```
+
+```python
+equal = 0
+for i,val in enumerate(pdSCon.columns):
+    if val == adata.var.index[i]:
+        equal +=1
+equal == len(pdSCon.columns)
+```
+
+```python
+scv.utils.show_proportions(adata)
+adata
+```
+
+```python
+adata.obs.head()
+```
+
+```python
+adata.var.head()
+```
+
+```python
+adata.obs.drop('batch',axis=1,inplace=True)
+adata.obs.head()
+```
+
+```python
+#convert na to 0
+adata.var.fillna(0,inplace=True)
+```
+
+```python
+df = pd.DataFrame(data=adata.var.apply(sum,1,result_type='reduce'),columns=['n_cells'])
+df
+```
+
+```python
+adata.var = df
+adata.var.head()
+```
+
+```python
+print(adata)
+print(adata.obs.head())
+print(adata.var.head())
+adata.layers['spliced']
+```
+
+```python
+adata.write('processed_adata.h5ad')
 ```
