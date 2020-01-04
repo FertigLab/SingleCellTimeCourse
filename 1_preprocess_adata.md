@@ -32,5 +32,44 @@ adataList
 ```
 
 ```python
+samples = []
+for an in adataNames:
+    samples.append(re.search('S.*[0-9]_',an).group()[:-1])
+#for z in zip(adataNames,samples):
+    #print(z)
+```
+
+```python
+for i,adata in enumerate(adataList):
+    adata.obs["folder"] = samples[i]
+adataList
+```
+
+```python
+# check if the barcodes are unique
+uniqueCheck = []
+for adata in adataList:
+    uniqueCheck.append(len(set(adata.obs.index)) == len(adata.obs.index))
+all(uniqueCheck)
+```
+
+```python
+#filter cells and genes
+for adata in adataList:
+    sc.pp.filter_cells(adata,min_genes=200)
+    sc.pp.filter_genes(adata,min_cells=3)
+adataList
+```
+
+```python
+#store spliced and unspliced for concatenation separately because it will get concat
+s = []
+u = []
+for ad in adataList:
+    s.append(scp.sparse.csr_matrix(ad.layers['spliced']))
+    u.append(scp.sparse.csr_matrix(ad.layers['unspliced']))
+```
+
+```python
 
 ```
