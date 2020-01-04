@@ -62,12 +62,27 @@ adataList
 ```
 
 ```python
+adata = adataList[0].concatenate(adataList[1:],join='outer')
+adata
+```
+
+```python
 #store spliced and unspliced for concatenation separately because it will get concat
 s = []
 u = []
 for ad in adataList:
     s.append(scp.sparse.csr_matrix(ad.layers['spliced']))
     u.append(scp.sparse.csr_matrix(ad.layers['unspliced']))
+```
+
+```python
+#Convert the spliced and unspliced matrices to pandas dataframe
+pdS = []
+pdU = []
+for i,sm in enumerate(s):
+    pdS.append(pd.DataFrame(sm.toarray(),index=adataList[i].obs.index,columns=adataList[i].var.index))
+for i,um in enumerate(u): 
+    pdU.append(pd.DataFrame(um.toarray(),index=adataList[i].obs.index,columns=adataList[i].var.index))
 ```
 
 ```python
