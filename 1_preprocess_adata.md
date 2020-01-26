@@ -54,7 +54,13 @@ all(uniqueCheck)
 ```
 
 ```python
+adata = adataList[0].concatenate(adataList[1:],join='outer')
+adata
+```
+
+```python
 #filter cells and genes
+# now I realised that this step is wrong because it doesn't contain all data from a cell in one row
 for adata in adataList:
     sc.pp.filter_cells(adata,min_genes=200)
     sc.pp.filter_genes(adata,min_cells=3)
